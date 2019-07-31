@@ -4,8 +4,13 @@
 import Vue from 'vue'
 //导入app 根组件
 import App from './App.vue'
-
+//导入自己的routers模块
 import router from './router'
+
+//导入vue-resource
+import VueResource from 'vue-resource'
+//安装vue-resource
+Vue.use(VueResource);
 
 // 1. 完整引入 mint-ui
  import MintUI from 'mint-ui'
@@ -14,7 +19,7 @@ import 'mint-ui/lib/style.css'
 // 3. 将 mint-ui 注册vue
 Vue.use(MintUI);
 
-//4. 引入图标字体样式文件
+//4. 引入图标字体样式文件 
  //import'./font/iconfont.css'
 //5. 引入axios.js文件 
 import axios from './axios'
@@ -59,7 +64,7 @@ Vue.config.productionTip = false
 import './lib/mui/css/mui.css'
 import './lib/mui/css/icons-extra.css'
 new Vue({
-  router,
+  router,//挂在路由对象到vm实例上
   render: h => h(App),
   store  
 }).$mount('#app')
