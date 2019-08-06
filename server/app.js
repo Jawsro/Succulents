@@ -189,3 +189,48 @@ server.get("/selProductList",(req,res)=>{
     }
   })
 })
+//4. 查询产品大 中 小 图片
+server.get("/selProductListImg",(req,res)=>{
+  var p_id=req.query.id;console.log(p_id)
+  var sql=`select * from  succulent_img where p_id=?`;
+  pool.query(sql,[p_id],(err,result)=>{
+    if(err) throw err;
+    if(result.length>0){
+      console.log(111)
+      
+      res.send(result);
+      
+    }else{
+      res.send("0")
+    }
+  })
+})
+//5. 用户注册功能
+server.get("/logon",(req,res)=>{
+  //1:参数
+  var uphone = req.query.uphone;
+  var upwd = req.query.upwd;
+  
+  //2.先查询该用户手机号是否已经注册
+var sql1="select * from user where  uphone=?"
+  pool.query(sql1,[uphone],(err,result)=>{
+    if(err) throw err;
+    if(result.length>0){
+      res.send("1")//已经注册了，不能再注册
+    }
+    else{
+      res.send("0")//可以注册
+    }
+  })
+  //3:json
+  // pool.query(sql,[uname,upwd],(err,result)=>{
+  //     if(err)throw err;
+  //     if(result.length==0){
+  //        res.send({code:-1,msg:"用户名或密码有误"});
+  //     }else{        
+  //        // 将当前登录用户的uid保存到session对象
+  //        req.session.uid=result[0].id;
+  //        res.send({code:1,msg:"登录成功"});
+  //     }
+  // })
+})
