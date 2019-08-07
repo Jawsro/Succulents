@@ -31,28 +31,6 @@ const session = require("express-session");
   server.use(express.static('public'))
 
  server.listen(3000);
-//3:完成第一个功能用户登录
-// server.get("/login",(req,res)=>{
-//   //1:参数
-//   var uname = req.query.uname;
-//   var upwd = req.query.upwd;
-//   //1.1:正则表达式验证用户名或密码
-//   //2:sql
-// var sql = "SELECT id FROM ";
-// sql +=" xz_login WHERE uname = ?";
-// sql +=" AND upwd = md5(?)";
-//   //3:json
-//   pool.query(sql,[uname,upwd],(err,result)=>{
-//       if(err)throw err;
-//       if(result.length==0){
-//          res.send({code:-1,msg:"用户名或密码有误"});
-//       }else{        
-//          // 将当前登录用户的uid保存到session对象
-//          req.session.uid=result[0].id;
-//          res.send({code:1,msg:"登录成功"});
-//       }
-//   })
-// })
 
 // // 4 功能二  商品得分页显示
 // server.get("/product",(req,res)=>{
@@ -216,21 +194,38 @@ var sql1="select * from user where  uphone=?"
   pool.query(sql1,[uphone],(err,result)=>{
     if(err) throw err;
     if(result.length>0){
-      res.send("1")//已经注册了，不能再注册
+      res.send("-1")//已经注册了，不能再注册
     }
     else{
-      res.send("0")//可以注册
+     //可以注册，添加用户信息到数据库
+     var sql2="insert into user values(?,?,?)";
+     pool.query(sql2,[null,uphone,upwd],(err,result)=>{
+       if(err)throw err;
+       console.log(result)
+       if(result.affectedRows=1){
+         res.send("1")//注册成功
+       }else{
+         res.send("0")//注册失败
+       }
+     })
     }
   })
-  //3:json
-  // pool.query(sql,[uname,upwd],(err,result)=>{
-  //     if(err)throw err;
-  //     if(result.length==0){
-  //        res.send({code:-1,msg:"用户名或密码有误"});
-  //     }else{        
-  //        // 将当前登录用户的uid保存到session对象
-  //        req.session.uid=result[0].id;
-  //        res.send({code:1,msg:"登录成功"});
-  //     }
-  // })
+})
+//6.用户登录功能
+server.get("/login",(req,res)=>{
+  //1:参数
+  var uphone = req.query.uphone;
+  var upwd = req.query.upwd; 
+  var sql="select * from user where uphone=? and upwd=?";
+  pool.query(sql,[uphone,upwd],(err,result)=>{
+    if(err) throw err;
+    if(result.length>0){
+      req.session.uid=result[0].id;
+     
+      res.send(result)//登录成功
+      
+    }else{
+      res.send("0")//登录失败
+    }
+  })
 })
