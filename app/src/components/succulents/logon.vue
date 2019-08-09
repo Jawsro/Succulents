@@ -37,8 +37,13 @@ export default {
         var obj={uphone:uphone,upwd:upwd};
         this.axios.get(url,{params:obj}).then(result=>{
             console.log(result.data)
-            if(result.data==1){
+            if(result.data==-1){
                 this.$messagebox("提示","该手机号已注册")
+            }
+            else if(result.data==1){
+                 this.$toast("注册成功");
+            }else if(result.data==0){
+                this.$messagebox("提示","注册失败")
             }
         })
     }

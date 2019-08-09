@@ -1,52 +1,215 @@
 <template>
   <div class="ProductList-container">
+    <!--  点击 加入购物车 小球-->
+    <transition @before-enter="beforeEnter"
+                @enter="Enter"
+                @after-enter="afterEnter">
+        <div class="ball" v-show="ballFlag"></div>
+    </transition>     
+      
       <!--产品轮播图-->
       <div class="mui-card">
             <div class="mui-card-content">
                 <div class="mui-card-content-inner">
-                    这是一个最简单的卡片视图控件；卡片视图常用来显示完整独立的一段信息，比如一篇文章的预览图、作者信息、点赞数量等
+                    <mt-swipe :auto="4000" >
+                        <mt-swipe-item v-for="item in ProductListImg" :key="item.iid">
+                            <img :src="'http://127.0.0.1:3000/'+item.md" alt="">
+                        </mt-swipe-item>
+                    </mt-swipe>
                 </div>
             </div>
         </div>
     <!--产品购买-->
-    <div class="mui-card">
-        <div class="mui-card-header">页眉</div>
+    <div class="mui-card">  
+        <div class="mui-card-header" >{{ProductList[0].title}}</div>
         <div class="mui-card-content">
             <div class="mui-card-content-inner">
-                包含页眉页脚的卡片，页眉常用来显示面板标题，页脚用来显示额外信息或支持的操作（比如点赞、评论等）
+               <p class="price">
+                   价格:<span>￥{{ProductList[0].price.toFixed(2)}}</span>
+               </p>
+               <p class="num">购买数量:
+                   <div class="mui-numbox" data-numbox-min='1' data-numbox-max='9'>
+                        <button class="mui-btn mui-btn-numbox-minus" type="button" @click="down">-</button>
+                        <input id="test" class="mui-input-numbox" type="number"  v-model="count"/>
+                        <button class="mui-btn mui-btn-numbox-plus" type="button" @click="up">+</button>
+                </div>
+               </p>
+               
+                <div>
+                    <mt-button size="small" type="danger">立即购买</mt-button>
+                    <mt-button size="small" type="primary" @click="addToshopcar">加入购物车</mt-button>
+                      <!--产品评论-->
+                    <mt-button size="large" plain @click="goComment(id)" class="comment">多肉评论</mt-button>
+                </div>
             </div>
         </div>
         
     </div>
-    <!--产品介绍-->
+  
+    
   </div>
 </template>
 <script>
+//导入数量加减框组件
+import numbox from "../common/mui-numbox.vue";
+
 export default {
   data(){
       return{
+        count:1,
         id:this.$route.params.id,//将URL地址中传递过来的ID值，直接挂载在data上，方便以后调用
-        ProductList:{}//产品的详情 的对象
+        ProductList:{},//产品的详情 的对象
+        ProductListImg:[],////产品的图片 的对象数组
+        ballFlag:false//控制小球的隐藏和显示
       }
   },
   created(){
-      this.getProductList()
+      this.getProductList(); 
+      this.getProductListImg();
   },
   methods:{
+      //点 + 功能
+      up(){
+          this.count ++
+      },
+      //点 - 功能
+      down(){
+          if(this.count<=1){
+              this.count=1;
+              return;
+          }
+          else{
+              this.count--
+          }
+      },
+      //点击 加入购物车 小球飞 的 功能
+      beforeEnter(el){
+        el.style.transform="translate(0,0)"
+      },
+      Enter(el,done){
+        el.offsetWidth;
+        el.style.transform="translate(92px,126px)";
+        el.style.transition="all 1s ease";
+        done();
+      },
+      afterEnter(el){
+       this.ballFlag=!this.ballFlag; 
+      },
+      //////////////////////////////
+      //添加购物车
+      addToshopcar(){
+       //点击 加入购物车
+       //1.获取已经登录的用户的id
+        var id=sessionStorage.getItem("uid");console.log(id)
+        //如果没有登录 提示登录信息
+        if(id==undefined){
+            this.$toast("请先登录")
+        }else{//如果已经登录
+            console.log(id);
+             //添加购物车,小球显示
+            this.ballFlag=!this.ballFlag;
+            //发送请求，拿到该产品的信息
+             var url="selProductList";
+            var obj={id:this.id};
+            this.axios.get(url,{params:obj}).then(result=>{
+            //console.log(result.data);
+            var pid=(result.data)[0].fid;
+            var title1=(result.data)[0].s_title;
+            var price1=(result.data)[0].price;
+            var img1=(result.data)[0].img;
+            //console.log(img1)
+            //发送请求添加到购物车
+            var url1="insertShopcar";
+            var obj={s_uid:id,s_pid:pid,s_img:img1,s_title:title1,s_price:price1,s_count:this.count};
+            this.axios.get(url1,{params:obj}).then(redult=>{
+                console.log(result.data)
+                if(result.data.length>0){
+                    this.$toast("添加成功")
+                }
+                
+            })
+        })
+    }
+    // this.ballFlag=!this.ballFlag;
+    //     //拼接出一个要保存在 store 中car数组里的商品信息对象
+    //     //{id:商品的id,count:商品的件数，price:商品的单价，selected:false}
+    //     var goodsinfo={id:this.id,count:this.count,price:this.ProductList.price,selected:true}
+    //     this.$store.commit("addToCar",goodsinfo)
+},
+    goComment(id){
+        //点击跳转至商品评论页面
+        this.$router.push({name:"comments",params:{id}})
+    },
     getProductList(){
         var url="selProductList";
         var obj={id:this.id};
         this.axios.get(url,{params:obj}).then(result=>{
-            console.log(result.data)
+          
+            this.ProductList=result.data
+            //   console.log( this.ProductList[0].title)
+        })
+    },
+    getProductListImg(){
+        var url="selProductListImg"
+        var obj={id:this.id}
+        this.axios.get(url,{params:obj}).then(result=>{
+            // console.log(result.data)
+            this.ProductListImg=result.data
         })
     }
   },
+  components:{
+      numbox,
+     
+  }
+
 }
 </script>
 <style scoped>
+.mui-card-footer{
+    height: 100px;
+}
     .ProductList-container{
-        background-color: #eee;
+        
         overflow: hidden;
+    }
+    .mui-card{
+        height: 300px;
+    }
+    .mui-card-content{
+        height: 100%;
+    }
+    .mui-card-content-inner{
+         height: 100%;
+    }
+    .mint-swipe-item img{
+        width:100%
+    }
+    .price,.num{
+        font-size: 16px;
+    }
+    .price span{
+        color: #e89abe;
+    }
+    .mui-numbox{
+        margin-bottom: 10px;
+    }
+    .mint-button--danger{
+        margin-right: 10px;
+    }
+    
+    .comment{
+        margin-top: 20px;
+    }
+    .ball{
+        width: 15px;height: 15px;
+        border-radius: 50%;
+        background-color: red;
+        position: absolute;
+        z-index: 99;
+        top:480px;
+        left:146px;
+        transform:translate(0px,0px)
     }
 </style>
 

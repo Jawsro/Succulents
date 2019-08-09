@@ -59,7 +59,7 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
     .mui-media-body{
         margin-top: 40px;
     }

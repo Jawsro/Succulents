@@ -20,15 +20,10 @@ export default {
     }
   },
   created(){
-    this.getProduct()
-  },
-  methods:{
-    getProduct(){
-      this.axios.get("/selSucculent").then(result=>{
+    this.axios.get("/selSucculent").then(result=>{
         console.log(result.data)
         this. productList=result.data
       })
-    }
   },
 }
 </script>

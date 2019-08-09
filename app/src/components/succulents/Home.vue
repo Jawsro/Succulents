@@ -14,29 +14,41 @@
     </mt-swipe>
     <!--9宫格-->
     <ul class="mui-table-view mui-grid-view mui-grid-9">
-        <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3"><a href="#">
+        <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3">
+          <router-link to="/Home/list">
             <img src="../../assets/1500254044.jpg" alt="">
-            <div class="mui-media-body">多肉养护</div></a>
+            <div class="mui-media-body">多肉养护</div>
+          </router-link>
         </li>
-        <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3"><a href="#">
+        <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3">
+          <router-link to="">
             <img src="../../assets/1500254096.jpg" alt="">
-            <div class="mui-media-body">图片分享</div></a>
+            <div class="mui-media-body">图片分享</div>
+          </router-link>
         </li>
-        <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3"><a href="#">
-           <img src="../../assets/1500255413.jpg" alt="">
-            <div class="mui-media-body">留言反馈</div></a>
+        <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3">
+          <router-link to="">
+            <img src="../../assets/1500255413.jpg" alt="">
+            <div class="mui-media-body">留言反馈</div>
+          </router-link>
         </li>
-        <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3"><a href="#">
+        <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3">
+          <router-link to="">
             <img src="../../assets/1500269931.jpg" alt="">
-            <div class="mui-media-body">多肉购买</div></a>
+            <div class="mui-media-body">多肉购买</div>
+          </router-link>
         </li>
-        <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3"><a href="#">
+        <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3">
+          <router-link to="">
             <img src="../../assets/1500255483.jpg" alt="">
-            <div class="mui-media-body">视频专区</div></a>
+            <div class="mui-media-body">视频专区</div>
+          </router-link>
         </li>
-        <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3"><a href="#">
+        <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3">
+          <router-link to="">
             <img src="../../assets/1500255491.jpg" alt="">
-            <div class="mui-media-body">联系我们</div></a>
+            <div class="mui-media-body">联系我们</div>
+          </router-link>
         </li>
       </ul> 
   </div>
