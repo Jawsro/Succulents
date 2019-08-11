@@ -1,8 +1,8 @@
 <template>
-<div class="shopcar">
+<div class="shopcar" >
     <div class="carList">
       <!--  购物车列表区-->
-      <div class="mui-card" v-for="(item,index) in carList" :key="item.sid">
+      <div class="mui-card" v-for="(item,index) in carList" :key="item.s_pid">
           <div class="mui-card-content">
             <div class="mui-card-content-inner">
               <input type="checkbox" class="input" v-model="item.isSelect" @change="select_one(index)"/>
@@ -18,7 +18,7 @@
                         <span id="test" class="mui-input-numbox"   >{{item.s_count}}</span>
                         <button class="mui-btn mui-btn-numbox-plus" type="button" @click="up(index)">+</button>
                     </div>
-                  <a href="#" @click.prevent="move(index)" class="move">删除</a>
+                  <a href="#" @click="move(index)" class="move">删除</a>
                 </p>
               </div>
             </div>
@@ -41,6 +41,7 @@
   </div>
 </template>
 <script>
+
 export default {
   data(){
     return{ 
@@ -48,13 +49,13 @@ export default {
       carList:[],//购物车产品列表
       allChecked: false,//全选选中状态
       isSelect:false,//默认状态
-      totalPrice: 0,//选中产品单价
+      totalPrice:0,//选中产品总价
       totalNum: 0,//选中产品总数量
     }
   },
   created(){
     this.getShopCar()
-   
+   console.log(this.$store.state.car)
   },
  
   methods:{
@@ -86,35 +87,32 @@ export default {
       //删除功能
       move(index){//console.log(1213)
         //删除 点击删除的那一行
-        this.carList.splice(index,1);
+        
+        var id=sessionStorage.getItem("uid");//console.log(id)
         var s_pid=this.carList[index].s_pid; console.log(s_pid,index)
         var url="deleteCar";
-        var obj={s_pid:s_pid};
+        var obj={s_pid:s_pid,s_uid:id};
         this.axios.get(url,{params:obj}).then(result=>{
           //console.log(result.data)
           if(result.data==1){
-              this.$toast("删除成功")
+              this.$toast("删除成功");
+             this.carList.splice(index,1);
           }
         })
-        this.goTotal()
-        this.getShopCar()
+        
+         //this.getShopCar()
       },
       //购物车关联用户ID
       getShopCar(){
-        this.$store.commit("clear");
+       
         //1.获取已经登录的用户的id
         var id=sessionStorage.getItem("uid");//console.log(id)
         var url="selShopCar";
         var obj={s_uid:id};
+        //发送请求获取该用户下的购物车数据
         this.axios.get(url,{params:obj}).then(result=>{
          console.log(result.data)
-          //this.carList=result.data;
-          var rows=result.data
-          for(var item of rows){
-            item.isSelect=false;
-            this.$store.commit("increment");
-          }
-          this.carList=rows
+          this.carList=result.data;
         })
       },
       //全选功能
