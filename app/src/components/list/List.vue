@@ -39,6 +39,7 @@ export default {
     }
     .mui-table-view{
         overflow: auto;
+        padding-bottom: 40px;
     }
 </style>
 

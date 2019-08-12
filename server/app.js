@@ -94,30 +94,14 @@ const session = require("express-session");
 //     }
 //   })
 // })
-// 6.删除选中的多个商品
-// server.get("/delAll",(req,res)=>{
-//   console.log(req.query);  
-//   console.log(req.query.ids);
-//   var ids=req.query.ids;
-//   var sql=`delete from xz_cart where id in (${ids})`;
-//   pool.query(sql,(err,result)=>{
-//     if(err) throw err;
-//     if(result.affectedRows>0){
-//       res.send({code:1,msg:'删除成功'});
-//     }else{
-//       res.send({code:-1,msg:'删除失败'})
-//     }
-//   })
-// })
+
 //1.多肉植物方法列表导入
 server.get("/selList",(req,res)=>{
   var sql=`select * from list`;
   pool.query(sql,(err,result)=>{
     if(err) throw err;
     if(result.length>0){
-     
-      res.send(result);
-      
+     res.send(result);
     }else{
       res.send({code:-1,msg:'失败'})
     }
@@ -125,15 +109,13 @@ server.get("/selList",(req,res)=>{
 })
 //2. 查询多肉养护方法的内容
 server.get("/selListItem",(req,res)=>{
-  var l_id=req.query.id;console.log(l_id)
+  var l_id=req.query.id;//console.log(l_id)
   var sql=`select * from list_item where l_id=?`;
   pool.query(sql,[l_id],(err,result)=>{
     if(err) throw err;
     if(result.length>0){
-      console.log(111)
-      
+      //console.log(111)
       res.send(result);
-      
     }else{
       res.send("0")
     }
@@ -153,15 +135,13 @@ server.get("/selSucculent",(req,res)=>{
 })
 //4. 查询产品详情
 server.get("/selProductList",(req,res)=>{
-  var fid=req.query.id;console.log(fid)
+  var fid=req.query.id;//console.log(fid)
   var sql=`select * from  succulent where fid=?`;
   pool.query(sql,[fid],(err,result)=>{
     if(err) throw err;
     if(result.length>0){
-      console.log(111)
-      
+      //console.log(111)
       res.send(result);
-      
     }else{
       res.send("0")
     }
@@ -169,16 +149,14 @@ server.get("/selProductList",(req,res)=>{
 })
 //4. 查询产品大 中 小 图片
 server.get("/selProductListImg",(req,res)=>{
-  var p_id=req.query.id;console.log(p_id)
+  var p_id=req.query.id;//console.log(p_id)
   var sql=`select * from  succulent_img where p_id=?`;
   pool.query(sql,[p_id],(err,result)=>{
     if(err) throw err;
     if(result.length>0){
-      console.log(111)
-      
+      //console.log(111)
       res.send(result);
-      
-    }else{
+     }else{
       res.send("0")
     }
   })
@@ -188,9 +166,8 @@ server.get("/logon",(req,res)=>{
   //1:参数
   var uphone = req.query.uphone;
   var upwd = req.query.upwd;
-  
   //2.先查询该用户手机号是否已经注册
-var sql1="select * from user where  uphone=?"
+  var sql1="select * from user where  uphone=?"
   pool.query(sql1,[uphone],(err,result)=>{
     if(err) throw err;
     if(result.length>0){
@@ -221,11 +198,88 @@ server.get("/login",(req,res)=>{
     if(err) throw err;
     if(result.length>0){
       req.session.uid=result[0].id;
-     
       res.send(result)//登录成功
-      
     }else{
       res.send("0")//登录失败
+    }
+  })
+})
+//7.产品加入购物车
+server.get("/insertShopcar",(req,res)=>{
+  //1:参数
+  var s_uid = req.query.s_uid;console.log(s_uid);
+  var s_pid = req.query.s_pid; 
+  var s_img = req.query.s_img;
+  var s_title = req.query.s_title;
+  var s_price = req.query.s_price;
+  var s_count = req.query.s_count;
+  //先判断该用户下的购物车是否已经有该产品
+  var sql1="select * from shopping_car where s_uid=? and s_pid=?";
+  pool.query(sql1,[s_uid,s_pid],(err,result)=>{
+    if(err) throw err;
+    if(result.length>0){//如果有，修改该产品的件数
+        // console.log(result,$s_count);   
+        var n=parseInt(result[0].s_count)+parseInt(s_count);
+        var sql2=`update shopping_car set s_count=? where s_pid=?`
+        pool.query(sql2,[n,s_pid],function(err,result){
+          if(err) throw err;
+          res.send('1')
+        })
+      }else{//如果没有，添加至购物车
+         var sql="insert into shopping_car values(?,?,?,?,?,?,?)";
+          pool.query(sql,[null,s_uid,s_pid,s_img,s_title,s_price,s_count],(err,result)=>{
+          if(err) throw err;
+          if(result.length>0){
+            console.log(result)
+            res.send("1")//添加成功
+          }else{
+            res.send("0")//添加失败
+          }
+        })
+      }
+  })
+})
+//8.查询用户购物车导入购物车页面
+server.get("/selShopCar",(req,res)=>{
+  var s_uid=req.query.s_uid;
+  var sql="select * from shopping_car where s_uid=?";
+  pool.query(sql,[s_uid],(err,result)=>{
+    if(err) throw err;
+    if(result.length>0){
+      console.log(result)
+      res.send(result);
+    }else{
+      res.send("0")
+    }
+  })
+})
+// 9.删除选中的商品
+server.get("/deleteCar",(req,res)=>{
+  var s_pid=req.query.s_pid;
+  var s_uid=req.query.s_uid;
+  var sql=`delete from shopping_car where s_pid=? and s_uid=?`;
+  pool.query(sql,[s_pid,s_uid],(err,result)=>{
+    if(err) throw err;
+    if(result.affectedRows>0){
+      res.send("1");//删除成功
+    }else{
+      res.send("0");//删除失败
+    }
+  })
+})
+//10.修改已存在的商品的数据
+server.get("/updateCarCount",(req,res)=>{
+  var s_pid=req.query.s_pid;
+  var s_uid=req.query.s_uid;
+  var s_count=req.query.s_count;
+  var sql=`update shopping_car set s_count=? where s_pid=? and s_uid=?`;
+  pool.query(sql,[s_count,s_pid,s_uid],(err,result)=>{
+    if(err) throw err;
+    if(result.affectedRows>0){
+      console.log(result)
+      res.send("1");//修改成功
+    }else{
+      res.send("0");//修改失败
     }
   })
 })

@@ -55,7 +55,7 @@ export default {
   },
   created(){
     this.getShopCar()
-   console.log(this.$store.state.car)
+   //console.log(this.$store.getters.getAllCount,12)
   },
  
   methods:{
@@ -78,29 +78,57 @@ export default {
         this.carList[index].s_count--
       }
       this.goTotal()
+
+         //点击  + 后修改的数据传入数据库
+          var s_pid=this.carList[index].s_pid;
+          var s_count=this.carList[index].s_count;
+          var s_uid=this.carList[index].s_uid;
+          var url="updateCarCount";
+          var obj={s_pid,s_count,s_uid};
+          this.axios.get(url,{params:obj}).then(result=>{
+            console.log(result.data)
+          })
+      
+       //vuex 中 - 功能操作全局共享的数据
+      this.$store.commit("downCarcount");
     },
      //点 + 功能
       up:function(index){
           this.carList[index].s_count ++
           this.goTotal()
+          console.log( this.carList[index])
+          //点击  + 后修改的数据传入数据库
+          var s_pid=this.carList[index].s_pid;
+          var s_count=this.carList[index].s_count;
+          var s_uid=this.carList[index].s_uid;
+          var url="updateCarCount";
+          var obj={s_pid,s_count,s_uid};
+          this.axios.get(url,{params:obj}).then(result=>{
+            console.log(result.data)
+          })
+          /////////////
+           //vuex 中 + 功能操作全局共享的数据
+          this.$store.commit("upCarcount");
       },
       //删除功能
       move(index){//console.log(1213)
         //删除 点击删除的那一行
         
         var id=sessionStorage.getItem("uid");//console.log(id)
-        var s_pid=this.carList[index].s_pid; console.log(s_pid,index)
+        var s_pid=this.carList[index].s_pid;// console.log(s_pid,index)
         var url="deleteCar";
         var obj={s_pid:s_pid,s_uid:id};
         this.axios.get(url,{params:obj}).then(result=>{
           //console.log(result.data)
           if(result.data==1){
               this.$toast("删除成功");
-             this.carList.splice(index,1);
+             var arr=this.carList.splice(index,1);
+             //vuex 中删除功能操作全局共享的数据
+             var delcount=arr[0].s_count
+             //console.log(arr,delcount)
+             this.$store.commit("delCarcount",delcount);
           }
         })
-        
-         //this.getShopCar()
       },
       //购物车关联用户ID
       getShopCar(){
@@ -111,7 +139,7 @@ export default {
         var obj={s_uid:id};
         //发送请求获取该用户下的购物车数据
         this.axios.get(url,{params:obj}).then(result=>{
-         console.log(result.data)
+         //console.log(result.data)
           this.carList=result.data;
         })
       },

@@ -1,7 +1,6 @@
 <template>
   <div class="mui-content">
     <div class="mui-content-padded">
-        <button @click="prev()">《</button>
         <h1>{{ LietItem[0].title}}</h1>
         <p>{{ LietItem[0].content1}}</p>
         <p>
@@ -34,9 +33,6 @@ export default {
     this.getLietItem()
   },
   methods:{
-      prev(){
-            this.$router.go(-1)
-      },
       getLietItem(){//获取 多肉养护的详情
           var url="selListItem";
           var obj={id:this.id}
