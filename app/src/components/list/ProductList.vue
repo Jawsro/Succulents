@@ -4,7 +4,7 @@
     <transition @before-enter="beforeEnter"
                 @enter="Enter"
                 @after-enter="afterEnter">
-        <div class="ball" v-show="ballFlag"></div>
+        <div class="ball" v-show="ballFlag" id="ball"></div>
     </transition>     
       
       <!--产品轮播图-->
@@ -20,7 +20,7 @@
             </div>
         </div>
     <!--产品购买-->
-    <div class="mui-card">  
+    <div class="mui-card mui-card1">  
         <div class="mui-card-header" >{{ProductList[0].title}}</div>
         <div class="mui-card-content">
             <div class="mui-card-content-inner">
@@ -88,8 +88,20 @@ export default {
       },
       Enter(el,done){
         el.offsetWidth;
-        el.style.transform="translate(92px,126px)";
-        el.style.transition="all 1s ease";
+        //优化小球飞动
+        //1.获取小球的位置
+        const ballposition=document.getElementById("ball").getBoundingClientRect();
+        console.log(ballposition)
+        // //2.获取购物车上小圈 的位置
+        const colorposition=document.getElementById("color").getBoundingClientRect(); 
+        console.log(colorposition)
+        //获取 小圈 的横坐标 到小球横坐标的差
+         const xDist=colorposition.left-ballposition.left;
+         //获取 小圈 的纵坐标 到小球纵坐标的差
+         const yDist=colorposition.top-ballposition.top;
+        //动态添加坐标
+        el.style.transform=`translate(${xDist}px,${yDist}px)`;
+        el.style.transition="all 1s cubic-bezier(0.4,-0.3,1,0.68)";
         done();
       },
       afterEnter(el){
@@ -101,12 +113,12 @@ export default {
            
             //点击 加入购物车
             //1.获取已经登录的用户的id
-            var id=sessionStorage.getItem("uid");console.log(id)
+            var id=sessionStorage.getItem("uid");//console.log(id)
             //如果没有登录 ，点击购物车 ，数据保存在本地 localStorage 
             if(id==undefined){
                 this.$toast("请先登录")
             }else{//如果已经登录
-                console.log(id);
+                //console.log(id);
                 //添加购物车,小球显示
                 this.ballFlag=!this.ballFlag;
                 //发送请求，拿到该产品的信息
@@ -156,8 +168,8 @@ export default {
         this.axios.get(url,{params:obj}).then(result=>{
           
             this.ProductList=result.data
-             console.log( this.ProductList[0].title)
-              console.log( result.data)
+             //console.log( this.ProductList[0].title)
+              //console.log( result.data)
         })
     },
     getProductListImg(){
@@ -214,9 +226,12 @@ export default {
         background-color: red;
         position: absolute;
         z-index: 99;
-        top:480px;
-        left:146px;
+        top:508px;
+        left:78px;
         transform:translate(0px,0px)
+    }
+    .mui-card1{
+        margin-bottom: 40px;
     }
 </style>
 

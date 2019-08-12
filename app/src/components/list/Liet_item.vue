@@ -1,7 +1,7 @@
 <template>
-  <div class="mui-content">
-    <div class="mui-content-padded">
-        <h1>{{ LietItem[0].title}}</h1>
+  <div class="mui-content" >
+    <div class="mui-content-padded" v-if="LietItem[0].title!==undefined">
+        <h1 >{{ LietItem[0].title}}</h1>
         <p>{{ LietItem[0].content1}}</p>
         <p>
             <img :src="'http://127.0.0.1:3000/'+LietItem[0].img1" data-preview-src="" data-preview-group="1" />
@@ -26,7 +26,7 @@ export default {
   data(){
       return {
           id: this.$route.params.id,//将URL地址中传递过来的ID值，直接挂载在data上，方便以后调用
-          LietItem:{}//多肉养护的详情 的对象
+          LietItem:['']//多肉养护的详情 的对象
     }
   },
   created(){
@@ -46,10 +46,8 @@ export default {
 </script>
 <style scoped>
     h1{
-        
         text-align: center;
         font-size: 20px;
-        
     }
     img{
         width:100%;
