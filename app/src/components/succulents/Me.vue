@@ -1,6 +1,7 @@
 <template>
 <!--登录页面-->
   <div class="login-container">
+    <router-link to="/login" class="login-in">设置</router-link>
     <h3>用户登录</h3>
     <mt-field label="手机号" placeholder="请输入手机号" type="tel" class="myinput" v-model="phone"></mt-field>
     <mt-field label="密码" placeholder="请输入密码" type="password" class="myinput" v-model="pwd"></mt-field>
@@ -49,6 +50,11 @@ export default {
 }
 </script>
 <style scoped>
+.login-in{
+  color: #000;
+  font-size: 24px;
+  font-weight: 700;
+}
 .login-container{
   margin-top: 150px;
 }

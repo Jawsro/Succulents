@@ -38,3 +38,5 @@
 
 #修复bug
 1.app.vue 中判断用户是否登录后再发送请求，carList
+
+#添加notifications.vue account.vue 组件

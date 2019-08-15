@@ -25,12 +25,12 @@
                 </ul>
                 <ul class="mui-table-view mui-table-view-chevron">
                     <li class="mui-table-view-cell">
-                        <a href="#account" class="mui-navigate-right">账号与安全</a>
+                        <router-link to="/account" class="mui-navigate-right">账号与安全</router-link>
                     </li>
                 </ul>
                 <ul class="mui-table-view mui-table-view-chevron">
                     <li class="mui-table-view-cell">
-                        <a href="#notifications" class="mui-navigate-right">新消息通知</a>
+                        <router-link to="notifications" class="mui-navigate-right">新消息通知</router-link>
                     </li>
                  </ul>
                 <ul class="mui-table-view">
