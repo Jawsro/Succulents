@@ -32,7 +32,7 @@
             :normalImage="require('./assets/55.png')"
             :focused="currentIndex[2].isSelect"
             ></tabbaricon>
-            <span class="color" > {{$store.getters.getAllCount}}</span>
+            <span class="color" id="color"> {{$store.getters.getAllCount}}</span>
             购物车
         </router-link>
         <router-link class="mint-tab-item" id="我的" @click.native="changeState(3)" to="/Me">
@@ -73,23 +73,25 @@ export default {
        
         //1.获取已经登录的用户的id
         var id=sessionStorage.getItem("uid");//console.log(id)
+        if(id!=undefined){
         var url="selShopCar";
         var obj={s_uid:id};
         //发送请求获取该用户下的购物车数据
         this.axios.get(url,{params:obj}).then(result=>{
-         console.log(result.data)
+         //console.log(result.data)
           this.carList=result.data;
           ////////////
         for(var item of this.carList){
             this.totalSum+=item.s_count;
-            
         }
-        console.log(this.totalSum)
+        //console.log(this.totalSum)
         var totalSum1=this.totalSum;
         //sessionStorage.setItem("totalSum",totalSum1);
-         this.$store.commit("addtotalSum",totalSum1)
+         this.$store.commit("addtotalSum",totalSum1);
+         
         //////////////
-        })
+    })
+    }
       },
       goBack(){
             this.$router.go(-1);//点击后退
@@ -134,7 +136,7 @@ export default {
     line-height: 20px;
     position: absolute;
     top:4px;
-    left:240px;
+    left:50px;
 }
    .app-container{
      padding-top:40px;
@@ -149,6 +151,7 @@ export default {
    .mint-tabbar>.mint-tab-item {
         font-size: 16px;
         color: #232323;
+        position: relative;
    }
  /*修改tabbar 选中文字颜色 40*/
     .mint-tabbar>.mint-tab-item.router-link-active{
